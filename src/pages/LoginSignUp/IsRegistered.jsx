@@ -7,7 +7,7 @@ async function IsRegistered(username, password) {
     const userExists = users.some(
       (user) =>
         user.username === username &&
-        user.website === password // או user.password אם יש לך
+        user.website === password 
     );
 
     return userExists; // true / false

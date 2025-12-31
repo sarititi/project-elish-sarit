@@ -10,7 +10,7 @@ function App() {
       
       {/* ברירת מחדל */}
       <Route path="*" element={<Navigate to="/login" />} />
-      <Route path="/is-registered" element={<IsRegistered />} />
+      {/* <Route path="/is-registered" element={<IsRegistered />} /> */}
     </Routes>
   );
 }

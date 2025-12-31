@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
-import IsRegistered from "./IsRegistered";
+import IsRegistered from "./IsRegistered.jsx";
 import "./Login.css";
 
 function Login() {
@@ -19,7 +19,7 @@ function Login() {
       const userExists = await IsRegistered(username, password); // IsRegistered מחזיר promise<boolean>
 
       if (userExists) {
-        const loggedUser = { username };
+        const loggedUser = { username, password};
         localStorage.setItem("user", JSON.stringify(loggedUser));
         setUser(loggedUser);
         navigate("/home");
