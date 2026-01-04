@@ -1,31 +1,42 @@
 import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
-import IsRegistered from "./IsRegistered.jsx";
+import IsRegistered from "./IsRegistered.js";
 import "./Login.css";
 
 function Login() {
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [website, setWebsite] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { setUser } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // פונקציה שתעביר ל-IsRegistered ותקבל תשובה
   const handleLoginCheck = async () => {
     setLoading(true);
     try {
-      const userExists = await IsRegistered(username, password); // IsRegistered מחזיר promise<boolean>
+      const fullUser = await IsRegistered(username, website);
 
-      if (userExists) {
-        const loggedUser = { username, password};
-        localStorage.setItem("user", JSON.stringify(loggedUser));
-        setUser(loggedUser);
-        navigate("/home");
+      if (fullUser) {
+        // 1️⃣ שמירה של כל היוזר בלוקל סטורג'
+        localStorage.setItem("user", JSON.stringify(fullUser));
+
+        // 2️⃣ שמירה ב־Context רק של username + website
+        setUser({
+          username: fullUser.username,
+          id: fullUser.id
+        });
+
+        alert("התחברת בהצלחה!");
+        navigate(`/users/${user.id}/home`);
+
       } else {
-        navigate("/signup");
+        alert("אינך קיים במערכת, נא להירשם");
+        setUsername("");
+        setWebsite("");
+        return;
       }
+
     } catch (error) {
       console.error("Login error:", error);
     } finally {
@@ -54,11 +65,11 @@ function Login() {
         </div>
 
         <div>
-          <label>Password</label><br />
+          <label>Password (website)</label><br />
           <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="website"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
             required
           />
         </div>

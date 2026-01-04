@@ -1,23 +1,25 @@
-// עכשיו IsRegistered היא **פונקציה בלבד**, מחזירה Promise<boolean>
+// IsRegistered.jsx
 async function IsRegistered(username, password) {
   try {
     const response = await fetch("http://localhost:3000/users");
     const users = await response.json();
 
-    const userExists = users.some(
+    const foundUser = users.find(
       (user) =>
         user.username === username &&
-        user.website === password 
+        user.website === password
     );
 
-    return userExists; // true / false
+    return foundUser || null;
+
   } catch (error) {
     console.error("Error checking user:", error);
-    return false;
+    return null;
   }
 }
 
 export default IsRegistered;
+
 
 
 // import { useLocation, Navigate, useNavigate } from "react-router-dom";

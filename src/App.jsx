@@ -1,16 +1,27 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/LoginSignUp/Login.jsx";
-import IsRegistered from "./pages/LoginSignUp/IsRegistered";
+import Signup from "./pages/LoginSignUp/Signup.jsx";
+import UserInformation from "./pages/LoginSignUp/UserInformation.jsx";
+import Home from "./pages/home/Home.jsx";
+import TodosPage from "./pages/todos/TodosPage.jsx";
+
 
 
 function App() {
   return (
     <Routes>
+      {/* עמודים ציבוריים */}
       <Route path="/login" element={<Login />} />
-      
+      <Route path="/signup" element={<Signup />} />
+
+      {/* עמודים של משתמש */}
+      <Route path="/users/:userId/userInformation" element={<UserInformation />} />
+      <Route path="/users/:userId/home" element={<Home />} />
+      <Route path="/users/:userId/todos" element={<TodosPage />} />
+
+
       {/* ברירת מחדל */}
       <Route path="*" element={<Navigate to="/login" />} />
-      {/* <Route path="/is-registered" element={<IsRegistered />} /> */}
     </Routes>
   );
 }
