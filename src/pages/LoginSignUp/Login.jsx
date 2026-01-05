@@ -21,11 +21,12 @@ function Login() {
         // 1️⃣ שמירה של כל היוזר בלוקל סטורג'
         localStorage.setItem("user", JSON.stringify(fullUser));
 
-        // 2️⃣ שמירה ב־Context רק של username + website
         setUser({
           username: fullUser.username,
           id: fullUser.id
         });
+        user.username=fullUser.username;
+        user.id=fullUser.id;
 
         alert("התחברת בהצלחה!");
         navigate(`/users/${user.id}/home`);

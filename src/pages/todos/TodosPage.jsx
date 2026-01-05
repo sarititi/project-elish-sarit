@@ -1,14 +1,14 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
-// import TodosList from "./TodosList";
+import TodosList from "./TodosList";
 import TodoForm from "./TodoForm";
-// import TodoFilter from "./TodoFilter";
+import TodoFilter from "./TodoFilter";
 import TodoSearchPanel from "./TodoSearchPanel";
 import "./todos.css";
 
 function TodosPage() {
-    const { userId } = useParams();
+    // const userId=useParams();
     const navigate = useNavigate();
     const [todos, setTodos] = useState([]);
     const [sortBy, setSortBy] = useState("id");//Decide how to sort
@@ -16,18 +16,37 @@ function TodosPage() {
     const [showAddForm, setShowAddForm] = useState(false);
     const { user, setUser } = useContext(AuthContext);
 
-    if (!user) { navigate("/login"); }
+    useEffect(() => {
+        if (!user) {
+            navigate("/login");
+        }
+    }, [user, navigate]);
 
-    useEffect(() => {//loading the todos from the server
-        fetch(`http://localhost:3001/todos?userId=${user.id}`)
+
+    useEffect(() => {
+        // if (!user) return;
+
+        // fetch(`http://localhost:3001/todos?userId=${user.id}`)
+        fetch(`http://localhost:3001/todos?userId=${Number(user.id)}`)
+
             .then(res => res.json())
             .then(data => setTodos(data));
-    }, [userId, user?.id, navigate]);
+    }, [user]);
 
-    function addTodo(newTodo) {
-        setTodos(prev => [...prev, newTodo]); // הוספה לרשימה
-        setShowAddForm(false);                 // סגירת הטופס
+
+    async function addTodo(newTodo) {
+        const res = await fetch("http://localhost:3001/todos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newTodo)
+        });
+
+        const savedTodo = await res.json(); // ⬅ id אמיתי מהשרת
+
+        setTodos(prev => [...prev, savedTodo]);
+        setShowAddForm(false);
     }
+
 
 
     function deleteTodo(id) {
@@ -39,10 +58,12 @@ function TodosPage() {
     }
 
     function handleSearchResult(results) {
-        setSearchResults(results);
+        if (results.length === 0) {
+            setSearchResults(null);
+        } else {
+            setSearchResults(results);
+        }
     }
-    const todosToShow = searchResults || getSortedTodos();
-
 
     // 🔃 פונקציה שמחזירה רשימת todos ממוינת לפי הבחירה
     function getSortedTodos() {
@@ -59,46 +80,52 @@ function TodosPage() {
         return sorted;
     }
 
-return (
-    <div className="todos-page">
 
-        {/* 🔝 אזור עליון: חיפוש + מיון */}
-        <div className="search-panel">
+    const todosToShow = searchResults !== null ? searchResults : getSortedTodos();
+    console.log("user:", user);
 
-            {/* ➕ כפתור פתיחת טופס */}
-            <button onClick={() => setShowAddForm(true)}>
-                ➕ הוסף מטלה
-            </button>
+    console.log("todos:", todos);
+    console.log("todosToShow:", todosToShow);
 
-            {/* ➕ טופס הוספה – מוצג באותו עמוד */}
-            {showAddForm && (
-                <TodoForm
-                    onAddTodo={addTodo}
-                    onCancel={() => setShowAddForm(false)}
+
+    return (
+        <div className="todos-page">
+
+            {/* 🔝 אזור עליון: חיפוש + מיון */}
+            <div className="search-panel">
+
+                <button
+                    className="add-todo-btn"
+                    onClick={() => showAddForm==false? setShowAddForm(true) :setShowAddForm(false)}
+                >
+                    ➕
+                </button>
+
+
+                {/* ➕ טופס הוספה – מוצג באותו עמוד */}
+                {showAddForm && (
+                    <TodoForm
+                        onAddTodo={addTodo}
+                        onCancel={() => setShowAddForm(false)}
+                    />
+                )}
+
+                {/* 🔍 חיפוש (הלוגיקה בקומפוננטה נפרדת) */}
+                <TodoSearchPanel
+                    todos={todos}
+                    onSearchResult={handleSearchResult}
                 />
-            )}
+                <TodoFilter setSortBy={setSortBy} />
+            </div>
 
-            {/* 🔍 חיפוש (הלוגיקה בקומפוננטה נפרדת) */}
-            <TodoSearchPanel
-                todos={todos}
-                onSearchResult={handleSearchResult}
+            <TodosList
+                todos={todosToShow}
+                onDelete={deleteTodo}
+                onUpdate={updateTodo}
             />
 
-            {/*
-            <TodoFilter setSortBy={setSortBy} />
-            */}
         </div>
-
-        {/*
-        <TodosList
-            todos={todosToShow}
-            onDelete={deleteTodo}
-            onUpdate={updateTodo}
-        />
-        */}
-
-    </div>
-);
+    );
 
 }
 

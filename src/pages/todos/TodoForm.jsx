@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { AuthContext } from "../AuthContext.jsx";
+import {useState, useContext } from "react";
+
+
 
 function TodoForm({ onAddTodo, onCancel }) {
+  const { user, setUser } = useContext(AuthContext);
 
   // 🔹 state של המטלה החדשה
   const [title, setTitle] = useState("");
@@ -12,9 +16,9 @@ function TodoForm({ onAddTodo, onCancel }) {
 
     // 🧱 יצירת אובייקט מטלה
     const newTodo = {
-      id: Date.now(),          // מזהה זמני
-      title: title,
-      completed: completed
+      // id: Date.now(),
+      completed: completed,
+      userId: user.id
     };
 
     onAddTodo(newTodo);        // שליחה לאבא

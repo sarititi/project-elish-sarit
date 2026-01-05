@@ -1,7 +1,7 @@
 // IsRegistered.jsx
 async function IsRegistered(username, password) {
   try {
-    const response = await fetch("http://localhost:3000/users");
+    const response = await fetch("http://localhost:3001/users");
     const users = await response.json();
 
     const foundUser = users.find(

@@ -23,9 +23,14 @@ function TodoSearchPanel({ todos, onSearchResult }) {
     }
 
     if (criteria === "completed") {
-      const value = query === "true";
-      filtered = todos.filter(todo => todo.completed === value);
+      filtered = todos.filter(
+        todo => String(todo.completed) === query
+      );
     }
+     if (criteria === "show_all") {
+      filtered = todos;
+    }
+
 
     // 🔁 מחזירים תוצאה לאבא
     onSearchResult(filtered);
@@ -39,14 +44,23 @@ function TodoSearchPanel({ todos, onSearchResult }) {
         <option value="id">מזהה</option>
         <option value="title">כותרת</option>
         <option value="completed">מצב ביצוע (true / false)</option>
+        <option value="show_all">הצג הכל</option>
       </select>
 
-      {/* טקסט חיפוש */}
-      <input
-        placeholder="הקלד ערך לחיפוש"
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-      />
+      {criteria === "completed" ? (
+        <select value={query} onChange={e => setQuery(e.target.value)}>
+          <option value="">בחר</option>
+          <option value="true">בוצע</option>
+          <option value="false">לא בוצע</option>
+        </select>
+      ) : (
+        <input
+          placeholder="הקלד ערך לחיפוש"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
+      )}
+
 
       {/* כפתור חיפוש */}
       <button onClick={handleSearch}>🔍 חפש</button>
