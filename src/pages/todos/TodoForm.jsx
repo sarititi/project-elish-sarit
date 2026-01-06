@@ -1,12 +1,9 @@
 import { AuthContext } from "../AuthContext.jsx";
 import {useState, useContext } from "react";
 
-
-
 function TodoForm({ onAddTodo, onCancel }) {
   const { user, setUser } = useContext(AuthContext);
 
-  // 🔹 state של המטלה החדשה
   const [title, setTitle] = useState("");
   const [completed, setCompleted] = useState(false);
 
@@ -16,7 +13,7 @@ function TodoForm({ onAddTodo, onCancel }) {
 
     // 🧱 יצירת אובייקט מטלה
     const newTodo = {
-      // id: Date.now(),
+      title: title,
       completed: completed,
       userId: user.id
     };
@@ -29,7 +26,6 @@ function TodoForm({ onAddTodo, onCancel }) {
   return (
     <form onSubmit={handleSubmit} className="todo-form">
 
-      {/* כותרת המטלה */}
       <input
         placeholder="כותרת המטלה"
         value={title}
@@ -37,7 +33,6 @@ function TodoForm({ onAddTodo, onCancel }) {
         required
       />
 
-      {/* מצב ביצוע */}
       <label>
         <input
           type="checkbox"
@@ -47,7 +42,6 @@ function TodoForm({ onAddTodo, onCancel }) {
         בוצעה
       </label>
 
-      {/* כפתורים */}
       <button type="submit">שמור</button>
       <button type="button" onClick={onCancel}>ביטול</button>
 

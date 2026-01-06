@@ -8,48 +8,47 @@ function TodoSearchPanel({ todos, onSearchResult }) {
   // 🔹 לפי איזה קריטריון
   const [criteria, setCriteria] = useState("title");
 
-  // 🔍 פונקציית חיפוש
-  function handleSearch() {
-    let filtered = [];
+function handleSearch() {
+  let filtered = [];
 
-    if (criteria === "id") {
-      filtered = todos.filter(todo => String(todo.id).includes(query));
-    }
-
-    if (criteria === "title") {
-      filtered = todos.filter(todo =>
-        todo.title.toLowerCase().includes(query.toLowerCase())
-      );
-    }
-
-    if (criteria === "completed") {
-      filtered = todos.filter(
-        todo => String(todo.completed) === query
-      );
-    }
-     if (criteria === "show_all") {
-      filtered = todos;
-    }
-
-
-    // 🔁 מחזירים תוצאה לאבא
-    onSearchResult(filtered);
+  if (criteria === "id") {
+    filtered = todos.filter(todo => String(todo.id).includes(query));
+  } else if (criteria === "title") {
+    filtered = todos.filter(todo =>
+      todo.title.toLowerCase().includes(query.toLowerCase())
+    );
+  } else if (criteria === "completed") {
+    filtered = todos.filter(todo => String(todo.completed) === query);
   }
+
+  // ❗ אם אין תוצאות, שמרו מערך ריק, לא null
+  // הצג הכל תשלח null באופן מפורש בלבד
+  onSearchResult(filtered);
+
+  // ❗ רוקנים את שדה החיפוש תמיד אחרי לחיצה
+  setQuery("");
+}
+
+
+
+
 
   return (
     <div className="search-panel">
-
-      {/* בחירת קריטריון */}
-      <select value={criteria} onChange={e => setCriteria(e.target.value)}>
+      <select
+        value={criteria}
+        onChange={e => {
+          setCriteria(e.target.value);
+          setQuery("");
+        }}
+      >
         <option value="id">מזהה</option>
         <option value="title">כותרת</option>
         <option value="completed">מצב ביצוע (true / false)</option>
-        <option value="show_all">הצג הכל</option>
       </select>
 
       {criteria === "completed" ? (
         <select value={query} onChange={e => setQuery(e.target.value)}>
-          <option value="">בחר</option>
           <option value="true">בוצע</option>
           <option value="false">לא בוצע</option>
         </select>
@@ -58,12 +57,20 @@ function TodoSearchPanel({ todos, onSearchResult }) {
           placeholder="הקלד ערך לחיפוש"
           value={query}
           onChange={e => setQuery(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && handleSearch()}
         />
+
       )}
 
-
-      {/* כפתור חיפוש */}
       <button onClick={handleSearch}>🔍 חפש</button>
+      <button
+        onClick={() => {
+          onSearchResult(null);
+          setQuery("");
+        }}
+      >
+        הצג הכל
+      </button>
     </div>
   );
 }

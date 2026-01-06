@@ -1,132 +1,102 @@
 import { useEffect, useState, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
 import TodosList from "./TodosList";
 import TodoForm from "./TodoForm";
 import TodoFilter from "./TodoFilter";
 import TodoSearchPanel from "./TodoSearchPanel";
+import { fetchTodos, createTodo } from "../api/TodoAPI.js";
 import "./todos.css";
 
 function TodosPage() {
-    // const userId=useParams();
-    const navigate = useNavigate();
-    const [todos, setTodos] = useState([]);
-    const [sortBy, setSortBy] = useState("id");//Decide how to sort
-    const [searchResults, setSearchResults] = useState(null);
-    const [showAddForm, setShowAddForm] = useState(false);
-    const { user, setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
-    useEffect(() => {
-        if (!user) {
-            navigate("/login");
-        }
-    }, [user, navigate]);
+  const [todos, setTodos] = useState([]);
+  const [sortBy, setSortBy] = useState("id"); //Decide how to sort
+  const [searchResults, setSearchResults] = useState(null);
+  const [showAddForm, setShowAddForm] = useState(false);
 
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
-    useEffect(() => {
-        // if (!user) return;
+  // 🔄 פונקציה שמרעננת את כל המטלות מהשרת
+  async function refreshTodos() {
+    if (!user) return;
+    const data = await fetchTodos(user.id);
+    setTodos(data);
+  }
 
-        // fetch(`http://localhost:3001/todos?userId=${user.id}`)
-        fetch(`http://localhost:3001/todos?userId=${Number(user.id)}`)
+  // 🏗️ מביא את המטלות בפעם הראשונה
+  useEffect(() => {
+    refreshTodos();
+  }, [user]);
 
-            .then(res => res.json())
-            .then(data => setTodos(data));
-    }, [user]);
+  async function addTodo(newTodo) {
+    const savedTodo = await createTodo(newTodo);
+    setTodos(prev => [...prev, savedTodo]);
+    setShowAddForm(false);
+  }
 
+  function handleSearchResult(results) {
+    setSearchResults(results); // מערך ריק נשאר מערך ריק
+  }
 
-    async function addTodo(newTodo) {
-        const res = await fetch("http://localhost:3001/todos", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newTodo)
-        });
+  // 🔃 פונקציה שמחזירה רשימת todos ממוינת לפי הבחירה
+  function getSortedTodos() {
+    const sorted = [...todos];
 
-        const savedTodo = await res.json(); // ⬅ id אמיתי מהשרת
-
-        setTodos(prev => [...prev, savedTodo]);
-        setShowAddForm(false);
+    if (sortBy === "title") {
+      sorted.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortBy === "completed") {
+      sorted.sort((a, b) => a.completed - b.completed);
+    } else {
+      sorted.sort((a, b) => a.id - b.id);
     }
 
+    return sorted;
+  }
 
+  const todosToShow = searchResults === null ? getSortedTodos() : searchResults;
 
-    function deleteTodo(id) {
-        setTodos(todos.filter(t => t.id !== id));
-    }
+  return (
+    <div className="todos-page">
+      {/* 🔝 אזור עליון: חיפוש + מיון */}
+      <div className="search-panel">
+        <button
+          className="add-todo-btn"
+          onClick={() => setShowAddForm(prev => !prev)}
+        >
+          ➕
+        </button>
 
-    function updateTodo(updatedTodo) {
-        setTodos(todos.map(t => t.id === updatedTodo.id ? updatedTodo : t));
-    }
+        {showAddForm && (
+          <TodoForm
+            onAddTodo={addTodo}
+            onCancel={() => setShowAddForm(false)}
+          />
+        )}
 
-    function handleSearchResult(results) {
-        if (results.length === 0) {
-            setSearchResults(null);
-        } else {
-            setSearchResults(results);
-        }
-    }
+        <TodoSearchPanel
+          todos={todos}
+          onSearchResult={handleSearchResult}
+        />
+        <TodoFilter setSortBy={setSortBy} />
+      </div>
 
-    // 🔃 פונקציה שמחזירה רשימת todos ממוינת לפי הבחירה
-    function getSortedTodos() {
-        const sorted = [...todos];
-
-        if (sortBy === "title") {
-            sorted.sort((a, b) => a.title.localeCompare(b.title));
-        } else if (sortBy === "completed") {
-            sorted.sort((a, b) => a.completed - b.completed);
-        } else {
-            sorted.sort((a, b) => a.id - b.id);
-        }
-
-        return sorted;
-    }
-
-
-    const todosToShow = searchResults !== null ? searchResults : getSortedTodos();
-    console.log("user:", user);
-
-    console.log("todos:", todos);
-    console.log("todosToShow:", todosToShow);
-
-
-    return (
-        <div className="todos-page">
-
-            {/* 🔝 אזור עליון: חיפוש + מיון */}
-            <div className="search-panel">
-
-                <button
-                    className="add-todo-btn"
-                    onClick={() => showAddForm==false? setShowAddForm(true) :setShowAddForm(false)}
-                >
-                    ➕
-                </button>
-
-
-                {/* ➕ טופס הוספה – מוצג באותו עמוד */}
-                {showAddForm && (
-                    <TodoForm
-                        onAddTodo={addTodo}
-                        onCancel={() => setShowAddForm(false)}
-                    />
-                )}
-
-                {/* 🔍 חיפוש (הלוגיקה בקומפוננטה נפרדת) */}
-                <TodoSearchPanel
-                    todos={todos}
-                    onSearchResult={handleSearchResult}
-                />
-                <TodoFilter setSortBy={setSortBy} />
-            </div>
-
-            <TodosList
-                todos={todosToShow}
-                onDelete={deleteTodo}
-                onUpdate={updateTodo}
-            />
-
-        </div>
-    );
-
+      {todosToShow.length === 0 ? (
+        <p className="no-results">😢 סורי, לא מצאנו את מה שחיפשת</p>
+      ) : (
+        <TodosList
+          todos={todosToShow}
+          refreshTodos={refreshTodos} // מעבירים לכל TodoItem
+        />
+      )}
+    </div>
+  );
 }
 
 export default TodosPage;
