@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
-import IsRegistered from "./IsRegistered.js";
+import { IsRegistered } from "../api/SignInUpAPI.js";
 import "./Login.css";
 
 function Login() {
@@ -18,19 +18,15 @@ function Login() {
       const fullUser = await IsRegistered(username, website);
 
       if (fullUser) {
-        // 1️⃣ שמירה של כל היוזר בלוקל סטורג'
-        localStorage.setItem("user", JSON.stringify(fullUser));
-
+        // localStorage.setItem("user", JSON.stringify(fullUser));
         setUser({
           username: fullUser.username,
-          id: fullUser.id
+          id: fullUser.id,
+          email: fullUser.email
         });
-        user.username=fullUser.username;
-        user.id=fullUser.id;
 
         alert("התחברת בהצלחה!");
-        navigate(`/users/${user.id}/home`);
-
+        navigate(`/users/${fullUser.id}/home`);
       } else {
         alert("אינך קיים במערכת, נא להירשם");
         setUsername("");
@@ -40,6 +36,7 @@ function Login() {
 
     } catch (error) {
       console.error("Login error:", error);
+      alert("שגיאה בכניסה, נסי שוב מאוחר יותר");
     } finally {
       setLoading(false);
     }

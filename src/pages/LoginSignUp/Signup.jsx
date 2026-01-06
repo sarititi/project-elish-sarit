@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext  } from "react";
 import { AuthContext } from "../AuthContext.jsx";
 import { useNavigate, Link } from "react-router-dom";
+import { createUser } from "../api/SignInUpAPI.js";
+import { validateForm, validateField } from "../utils/SignInUpvalidation";
 import "./Signup.css";
 
 function Signup() {
@@ -35,74 +37,43 @@ function Signup() {
     setTouched({ ...touched, [name]: true });
   }
 
-  function validateField(name, value) {
-    switch (name) {
-      case "username":
-        if (!value) return "יש להזין שם משתמש";
-        if (value.length < 3) return "שם המשתמש חייב להיות מעל 3 תווים";
-        return "";
-      case "website":
-        if (!value) return "יש להזין סיסמה";
-        if (value.length < 4) return "הסיסמה חייבת להיות מעל 4 תווים";
-        return "";
-      case "verifyWebsite":
-        if (!value) return "יש לאמת את הסיסמה";
-        if (value !== formData.website) return "הסיסמאות אינן תואמות";
-        return "";
-      default:
-        return "";
-    }
-  }
+async function handleSubmit(e) {
+  e.preventDefault();
+  setTouched({ username: true, website: true, verifyWebsite: true });
 
-  useEffect(() => {
-    const newErrors = {};
-    for (const key in formData) {
-      newErrors[key] = validateField(key, formData[key]);
-    }
-    setErrors(newErrors);
-  }, [formData]);
+  const { isValid, errors } = validateForm(formData, [
+    "username",
+    "website",
+    "verifyWebsite"
+  ]);
 
-  function validateForm() {
-    let valid = true;
-    for (const key in errors) {
-      if (errors[key]) valid = false;
-    }
-    return valid;
-  }
+  setErrors(errors);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setTouched({ username: true, website: true, verifyWebsite: true });
+  if (!isValid) return;
 
-    if (!validateForm()) return;
+  try {
+    const newUser = await createUser(
+      formData.username,
+      formData.website
+    );
 
-    const response = await fetch("http://localhost:3001/users");
-    const users = await response.json();
-    const existingUser = users.find(user => user.username === formData.username);
-
-    if (existingUser) {
+    if (!newUser) {
       alert("שם משתמש כבר קיים במערכת");
-      setFormData({ username: "", website: "", verifyWebsite: "" });
-      setTouched({ username: false, website: false, verifyWebsite: false });
       return;
     }
 
-    const createResponse = await fetch("http://localhost:3001/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: formData.username, website: formData.website })
+    setUser({
+      username: newUser.username,
+      id: newUser.id,
+      email: newUser.email
     });
 
-    const newUser = await createResponse.json();
-    
-    setUser({
-          username: newUser.username,
-          id: newUser.id
-        });
-
     navigate(`/users/${newUser.id}/userInformation`);
+  } catch (error) {
+    console.error("Signup error:", error);
+    alert("שגיאה בהרשמה, נסי שוב");
   }
-
+}
   const getBorderColor = (field) => {
     if (!touched[field]) return "#ccc";
     return errors[field] ? "red" : "green";

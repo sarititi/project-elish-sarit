@@ -3,9 +3,11 @@ import { createContext, useState, useEffect } from "react";
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
+  
   const [user, setUser] = useState({
     id: null,
     username: null,
+    email: null
   });
 
    // 🔄 טעינה מרענון

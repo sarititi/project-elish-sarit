@@ -13,7 +13,7 @@ export async function createTodo(todo) {
 // 🔄 עדכון מטלה
 export async function updateTodoApi(todo) {
   const res = await fetch(`${BASE_URL}/${todo.id}`, {
-    method: "PATCH",//patch???
+    method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(todo)
   });
