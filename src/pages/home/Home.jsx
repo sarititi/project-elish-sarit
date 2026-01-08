@@ -1,7 +1,8 @@
 import { useContext, useEffect } from "react"; //לשליפת המשתמש המחובר
 import { Link, useNavigate, Outlet } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
-import "./Home.css";
+import SideMenu from "../../components/SideMenu.jsx";
+import "./home.css";
 
 
 function Home() {
@@ -23,30 +24,60 @@ function Home() {
         setUser(null);
         navigate("/login");
     }
+    // בדוק אם אנחנו בנתיב של info/todos/posts/albums
+    const isInSubRoute = location.pathname.includes('/info') ||
+        location.pathname.includes('/todos') ||
+        location.pathname.includes('/posts') ||
+        location.pathname.includes('/albums');
+
 
     return (
         <div className="home-layout">
+            <SideMenu />
+            <main>
+                <div className="home-container">
+                    <h1>Hello {user.username}</h1>
 
-            {/* תפריט צד */}
-            <aside className="side-menu">
-                <div className="user-name">
-                    שלום {user.username}
+                    {/* הצג את הכרטיסיות רק אם לא בעמוד פנימי */}
+                    {!isInSubRoute && (
+                        <>
+                            <div className="home-actions">
+                                <div className="action-card">
+                                    <h3>Info</h3>
+                                    <p>צפייה בפרטים האישיים שלך.</p>
+                                    <Link to={`/users/${user.id}/home/info`}>מעבר למידע</Link>
+                                </div>
+                                <div className="action-card">
+                                    <h3>Todos</h3>
+                                    <p>צפייה וניהול רשימת המשימות האישיות שלך.</p>
+                                    <Link to={`/users/${user.id}/home/todos`}>מעבר למשימות</Link>
+                                </div>
+                                <div className="action-card">
+                                    <h3>Posts</h3>
+                                    <p>צפייה בפוסטים שלך וביצוע פעולות עליהם.</p>
+                                    <Link to={`/users/${user.id}/home/posts`}>מעבר לפוסטים</Link>
+                                </div>
+                                <div className="action-card">
+                                    <h3>Albums</h3>
+                                    <p>צפייה באלבומי התמונות שלך.</p>
+                                    <Link to={`/users/${user.id}/home/albums`}>מעבר לאלבומים</Link>
+                                </div>
+                            </div>
+
+                            <div className="logout-row">
+                                <div className="action-card action-card--logout">
+                                    <h3>Logout</h3>
+                                    <p>יציאה מהמערכת וחזרה לעמוד ההתחברות.</p>
+                                    <button onClick={handleLogout}>התנתקות</button>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {/* הצג את התוכן הפנימי */}
+                    <Outlet />
                 </div>
-
-                <nav>
-                    <Link to={`/users/${user.id}/info`}>Info</Link>
-                    <Link to={`/users/${user.id}/todos`}>Todos</Link>
-                    <Link to={`/users/${user.id}/posts`}>Posts</Link>
-                    <Link to={`/users/${user.id}/albums`}>Albums</Link>
-                    <button onClick={handleLogout}>Logout</button>
-                </nav>
-            </aside>
-
-            {/* אזור תוכן משתנה */}
-            <main className="home-content">
-                <Outlet />
             </main>
-
         </div>
     );
 }

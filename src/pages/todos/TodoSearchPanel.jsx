@@ -13,6 +13,7 @@ function handleSearch() {
 
   if (criteria === "id") {
     filtered = todos.filter(todo => String(todo.id).includes(query));
+
   } else if (criteria === "title") {
     filtered = todos.filter(todo =>
       todo.title.toLowerCase().includes(query.toLowerCase())
@@ -28,10 +29,6 @@ function handleSearch() {
   // ❗ רוקנים את שדה החיפוש תמיד אחרי לחיצה
   setQuery("");
 }
-
-
-
-
 
   return (
     <div className="search-panel">

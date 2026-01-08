@@ -1,4 +1,4 @@
-import "../LoginSignUp/UserInformation.css";
+// import "../LoginSignUp/UserInformation.css";
 
 export function validateField(name, value, extraData = {}) {
   switch (name) {
