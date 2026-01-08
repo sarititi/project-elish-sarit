@@ -4,7 +4,8 @@ import Signup from "./pages/LoginSignUp/Signup.jsx";
 import UserInformation from "./pages/LoginSignUp/UserInformation.jsx";
 import Home from "./pages/home/Home.jsx";
 import TodosPage from "./pages/todos/TodosPage.jsx";
-
+import Albums from "./pages/albums/Albums.jsx";
+import AlbumPhotos from "./pages/albums/AlbumPhotos.jsx"
 
 
 function App() {
@@ -18,6 +19,9 @@ function App() {
       <Route path="/users/:userId/userInformation" element={<UserInformation />} />
       <Route path="/users/:userId/home" element={<Home />} />
       <Route path="/users/:userId/todos" element={<TodosPage />} />
+      <Route path="/users/:userId/albums" element={<Albums />} />
+      <Route path="/users/:userId/albums/:albumId" element={<AlbumPhotos />} />
+
 
 
       {/* ברירת מחדל */}
