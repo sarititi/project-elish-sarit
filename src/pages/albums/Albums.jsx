@@ -1,116 +1,73 @@
-// function AlbumPhotos() {
-//     const [albumData, setAlbumData] = useState(null);
-//     const [photos, setPhotos] = useState([]);
-//     const [isLoading, setIsLoading] = useState(false);
-//     const { albumId } = useParams();
-
-//     useEffect(() => {
-//         async function fetchAlbum() {
-//             setIsLoading(true);
-//             try {
-//                 const album = await getAlbumById(albumId); // אלבום אחד
-//                 const albumPhotos = await getPhotosByAlbum(albumId); // תמונות
-
-//                 setAlbumData(album);
-//                 setPhotos(albumPhotos);
-//             } catch (err) {
-//                 console.error(err);
-//             }
-//             setIsLoading(false);
-//         }
-
-//         fetchAlbum();
-//     }, [albumId]);
-
-//     function handleDelete(photoId) {
-//         setPhotos(prev => prev.filter(photo => photo.id !== photoId));
-//     }
-
-//     return (
-//         <div className="album-photos-page">
-//             <h2 className="album-title">
-//                 📸 {albumData?.title || "Album Photos"}
-//             </h2>
-
-//             {isLoading && <p className="loading-text">טוען תמונות...</p>}
-
-//             <div className="photos-grid">
-//                 {photos.map(photo => (
-//                     <div key={photo.id} className="photo-card">
-//                         <img
-//                             src={photo.url}
-//                             alt={photo.title}
-//                         />
-//                         <h4 className="photo-title">{photo.title}</h4>
-//                         <button onClick={() => handleDelete(photo.id)}>
-//                             מחיקה
-//                         </button>
-//                     </div>
-//                 ))}
-//             </div>
-
-//             {!isLoading && photos.length === 0 && (
-//                 <p className="empty-text">אין תמונות באלבום הזה</p>
-//             )}
-//         </div>
-//     );
-// }
-
-// src/pages/Albums/Albums.jsx
-
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { getAlbumsByUser, createAlbum } from "../api/AlbumsAPI";
-import { Link } from "react-router-dom";
+import AlbumCreate from "./AlbumCreate.jsx";
+import AlbumSearch from "./AlbumSearch.jsx";
+import AlbumCard from "./AlbumCard.jsx";
+import { filterByIdTitle } from "../utils/filterByIdTitle";
 import "./Albums.css";
 
 function Albums() {
-    const { user } = useContext(AuthContext);
-    const [albums, setAlbums] = useState([]);
-    const [newTitle, setNewTitle] = useState("");
+  const { user } = useContext(AuthContext);
+  const [albums, setAlbums] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchBy, setSearchBy] = useState("title");
+  const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        async function fetchAlbums() {
-            const data = await getAlbumsByUser(user.id);
-            setAlbums(data);
-        }
-        fetchAlbums();
-    }, [user.id]);
+  useEffect(() => {
+    fetchAlbums();
+  }, [user.id]);
 
-    async function handleAddAlbum() {
-        if (!newTitle) return;
-        const album = await createAlbum(user.id, newTitle);
-        setAlbums(prev => [...prev, album]);
-        setNewTitle("");
-    }
+  async function fetchAlbums() {//טוליפת נתונים של האלבומים מהשרת
+    setIsLoading(true);
+    const data = await getAlbumsByUser(user.id);
+    setTimeout(() => {
+      setAlbums(data);
+      setIsLoading(false);
+    }, 500);
+  }
 
-    return (
-        <div className="albums-page">
-            <h2>האלבומים שלי</h2>
+  async function handleCreateAlbum(title) {
+    const newAlbum = await createAlbum(user.id, title);
+    setAlbums(prev => [...prev, newAlbum]);//בתוך הקודם של האלבומים מוסיף את האלבום החדש
+  }
 
-            <div className="album-create">
-                <input
-                    value={newTitle}
-                    onChange={e => setNewTitle(e.target.value)}
-                    placeholder="שם אלבום חדש"
-                />
-                <button onClick={handleAddAlbum}>הוסף אלבום</button>
-            </div>
+const filteredAlbums = filterByIdTitle(
+  albums,
+  searchBy === "id" ? searchTerm : "",
+  searchBy === "title" ? searchTerm : ""
+);
 
-            <div className="albums-list">
-                {albums.map(album => (
-                    <Link
-                        key={album.id}
-                        to={`/users/${user.id}/home/albums/${album.id}`}
-                        className="album-card"
-                    >
-                        <h3>{album.title}</h3>
-                    </Link>
-                ))}
-            </div>
+
+  return (
+    <div className="albums-page">
+      <h2 className="page-title">📚 האלבומים שלי</h2>
+
+      <AlbumCreate onCreateAlbum={handleCreateAlbum} />
+
+      <AlbumSearch
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchBy={searchBy}
+        setSearchBy={setSearchBy}
+      />
+
+      {/* תצוגת האלבומים */}
+      {isLoading ? (
+        <div className="loading">טוען אלבומים...</div>
+      ) : filteredAlbums.length === 0 ? (
+        <div className="no-results">
+          {searchTerm ? "לא נמצאו תוצאות" : "אין אלבומים עדיין"}
         </div>
-    );
+      ) : (
+        <div className="albums-grid">
+          {filteredAlbums.map(album => (
+            <AlbumCard key={album.id} album={album} userId={user.id} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default Albums;
-

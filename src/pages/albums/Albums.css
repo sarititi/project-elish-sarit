@@ -1,163 +1,468 @@
-/* .albums-page {
-  padding: 2rem;
-  font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(135deg, #f6f8ff, #eef1ff);
+/* Albums.css */
+
+/* ==================== Layout עיקרי ==================== */
+.albums-page,
+.album-photos-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
 }
 
-.albums-page h2 {
-  margin-bottom: 1.5rem;
-  color: #3a3a5c;
-  font-size: 2rem;
-}
-
-.album-create {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-}
-
-.album-create input {
-  flex: 1;
-  padding: 0.6rem 0.8rem;
-  border-radius: 10px;
-  border: 1px solid #cdd2ff;
-  font-size: 1rem;
-}
-
-.album-create input:focus {
-  outline: none;
-  border-color: #7b83ff;
-}
-
-.album-create button {
-  padding: 0.6rem 1.2rem;
-  border-radius: 10px;
-  border: none;
-  background: #7b83ff;
+.page-title,
+.album-photos-title {
   color: white;
-  font-weight: 600;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+/* ==================== טופס יצירת אלבום ==================== */
+.create-album-form {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.album-input {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.album-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.btn-add {
+  padding: 12px 24px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  transition: 0.2s;
+  font-weight: bold;
+  transition: background 0.3s;
 }
 
-.album-create button:hover {
-  background: #636dff;
+.btn-add:hover:not(:disabled) {
+  background: #5568d3;
 }
 
-.albums-list {
+.btn-add:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==================== שורת חיפוש ==================== */
+.search-bar {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+  display: flex;
+  gap: 10px;
+}
+
+.search-select {
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.search-select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* ==================== רשת אלבומים ==================== */
+.albums-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
 }
 
 .album-card {
   background: white;
-  border-radius: 16px;
-  padding: 1rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
 }
 
 .album-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
 }
 
-.album-card a {
-  text-decoration: none;
-  color: #3a3a5c;
+.album-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.album-id {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #667eea;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.album-title {
+  color: #333;
+  font-size: 1.3rem;
+  margin-top: 20px;
+  margin-bottom: 10px;
   font-weight: 600;
 }
 
+.album-arrow {
+  color: #667eea;
+  font-size: 1.5rem;
+  text-align: left;
+  font-weight: bold;
+}
+
+/* ==================== רשת תמונות ==================== */
 .photos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
 }
 
 .photo-card {
   background: white;
-  border-radius: 14px;
-  padding: 0.5rem;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-  text-align: center;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.photo-card img {
+.photo-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+.photo-image {
   width: 100%;
-  border-radius: 10px;
-  margin-bottom: 0.4rem;
+  height: 200px;
+  object-fit: cover;
+  display: block;
 }
 
-.photo-card button {
-  background: #ff6b6b;
+.photo-title {
+  padding: 15px;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+  min-height: 60px;
+}
+
+.photo-actions {
+  display: flex;
+  gap: 10px;
+  padding: 0 15px 15px;
+}
+
+.btn-edit,
+.btn-delete {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: opacity 0.3s, transform 0.2s;
+  font-weight: 500;
+}
+
+.btn-edit {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-delete {
+  background: #f44336;
+  color: white;
+}
+
+.btn-edit:hover,
+.btn-delete:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+.btn-edit:active,
+.btn-delete:active {
+  transform: translateY(0);
+}
+
+/* ==================== עריכת תמונה ==================== */
+.photo-edit {
+  padding: 15px;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-save,
+.btn-cancel {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.3s;
+}
+
+.btn-save {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-cancel {
+  background: #9e9e9e;
+  color: white;
+}
+
+.btn-save:hover,
+.btn-cancel:hover {
+  opacity: 0.85;
+}
+
+/* ==================== הוספת תמונה ==================== */
+.btn-add-photo {
+  width: 100%;
+  padding: 15px;
+  background: white;
+  color: #667eea;
+  border: 2px dashed #667eea;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  transition: all 0.3s;
+}
+
+.btn-add-photo:hover {
+  background: #667eea;
+  color: white;
+  border-style: solid;
+}
+
+.add-photo-form {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.photo-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.photo-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* ==================== כפתורים כלליים ==================== */
+.btn-back {
+  padding: 12px 24px;
+  background: white;
+  color: #667eea;
   border: none;
   border-radius: 8px;
-  padding: 0.3rem 0.6rem;
-  color: white;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  transition: all 0.3s;
+  font-size: 16px;
 }
 
-.photo-card button:hover {
-  background: #ff4f4f;
+.btn-back:hover {
+  background: #667eea;
+  color: white;
+  transform: translateX(5px);
 }
 
-.load-more {
-  margin: 2rem auto;
+.btn-load-more {
   display: block;
-  padding: 0.7rem 2rem;
-  border-radius: 20px;
-  border: none;
-  background: #4ecdc4;
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
+  width: 100%;
+  max-width: 400px;
+  margin: 30px auto;
+  padding: 15px 24px;
+  background: white;
+  color: #667eea;
+  border: 2px solid white;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 0.3s;
 }
 
-.load-more:hover {
-  background: #38b8ae;
+.btn-load-more:hover {
+  background: #667eea;
+  color: white;
+  transform: scale(1.05);
 }
 
-@media (max-width: 600px) {
-  .album-create {
+/* ==================== הודעות מערכת ==================== */
+.loading,
+.no-results,
+.no-photos,
+.end-message {
+  text-align: center;
+  padding: 40px;
+  color: white;
+  font-size: 1.2rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  margin: 20px 0;
+  backdrop-filter: blur(10px);
+}
+
+.end-message {
+  background: rgba(76, 175, 80, 0.2);
+  border: 2px solid rgba(76, 175, 80, 0.4);
+}
+
+.no-results,
+.no-photos {
+  background: rgba(255, 193, 7, 0.2);
+  border: 2px solid rgba(255, 193, 7, 0.4);
+}
+
+/* ==================== אנימציות ==================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.album-card,
+.photo-card {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 768px) {
+  .albums-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+  }
+
+  .photos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+  }
+
+  .page-title,
+  .album-photos-title {
+    font-size: 1.5rem;
+  }
+
+  .create-album-form,
+  .search-bar {
     flex-direction: column;
   }
-} */
-.albums-page {
-    padding: 20px;
-}
 
-.albums-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.album-card {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    text-decoration: none;
-    color: inherit;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
-}
-
-.album-card:hover {
-    transform: translateY(-5px);
-}
-
-.album-image img {
+  .search-select {
     width: 100%;
-    height: 180px;
-    object-fit: cover;
+  }
 }
 
-.album-card h3 {
-    padding: 12px;
-    text-align: center;
+@media (max-width: 480px) {
+  .albums-page,
+  .album-photos-page {
+    padding: 10px;
+  }
+
+  .albums-grid,
+  .photos-grid {
+    grid-template-columns: 1fr;
+  }
 }

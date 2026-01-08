@@ -6,7 +6,7 @@ import Home from "./pages/home/Home.jsx";
 import Info from "./pages/info/Info.jsx";
 import TodosPage from "./pages/todos/TodosPage.jsx";
 import Albums from "./pages/albums/Albums.jsx";
-import AlbumPhotos from "./pages/albums/AlbumPhotos.jsx"
+import Photos from "./pages/albums/Photos.jsx"
 
 
 function App() {
@@ -20,7 +20,7 @@ function App() {
         <Route path="info" element={<Info />} />
         <Route path="todos" element={<TodosPage />} />
         <Route path="albums" element={<Albums />} />
-        <Route path="albums/:albumId" element={<AlbumPhotos />} />
+        <Route path="albums/:albumId" element={<Photos />} />
       </Route>
 
 

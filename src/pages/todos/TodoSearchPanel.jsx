@@ -11,7 +11,7 @@ function TodoSearchPanel({ todos, onSearchResult }) {
 function handleSearch() {
   let filtered = [];
 
-  if (criteria === "id") {
+  if (criteria === "id") {///להשתמש בפונקציה אלישבע
     filtered = todos.filter(todo => String(todo.id).includes(query));
 
   } else if (criteria === "title") {
