@@ -1,4 +1,4 @@
-export function filterByIdTitle(items, searchId, searchTitle) {
+export function filterByIdTitle(items, searchId, searchTitle, searchCompleted = null) {
   const idQuery = searchId.trim();
   const titleQuery = searchTitle.trim().toLowerCase();
 
@@ -11,6 +11,11 @@ export function filterByIdTitle(items, searchId, searchTitle) {
       ? (item.title || "").toLowerCase().includes(titleQuery)
       : true;
 
-    return matchId && matchTitle;
+    const matchCompleted =
+      searchCompleted === null
+        ? true
+        : item.completed === searchCompleted;
+
+    return matchId && matchTitle && matchCompleted;
   });
 }

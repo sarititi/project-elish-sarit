@@ -2,50 +2,54 @@ import { AuthContext } from "../AuthContext.jsx";
 import {useState, useContext } from "react";
 
 function TodoForm({ onAddTodo, onCancel }) {
-  const { user, setUser } = useContext(AuthContext);
+  const { user} = useContext(AuthContext);
 
   const [title, setTitle] = useState("");
   const [completed, setCompleted] = useState(false);
 
-  // ➕ שליחת מטלה חדשה לאבא
   function handleSubmit(e) {
     e.preventDefault();
 
-    // 🧱 יצירת אובייקט מטלה
     const newTodo = {
       title: title,
       completed: completed,
       userId: user.id
     };
 
-    onAddTodo(newTodo);        // שליחה לאבא
-    setTitle("");              // ניקוי שדה
+    onAddTodo(newTodo);        
+    setTitle("");             
     setCompleted(false);
   }
 
-  return (
-    <form onSubmit={handleSubmit} className="todo-form">
-
-      <input
-        placeholder="כותרת המטלה"
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-        required
-      />
-
-      <label>
+    return (
+    <div className="todo-item todo-form-card">
+      <div className="todo-form-inner">
         <input
-          type="checkbox"
-          checked={completed}
-          onChange={e => setCompleted(e.target.checked)}
+          className="todo-form-input"
+          placeholder="✨ מה המטלה החדשה?"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && handleSubmit()}
+          autoFocus
         />
-        בוצעה
-      </label>
 
-      <button type="submit">שמור</button>
-      <button type="button" onClick={onCancel}>ביטול</button>
+        <div className="todo-form-actions">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={completed}
+              onChange={e => setCompleted(e.target.checked)}
+            />
+            <span>בוצעה</span>
+          </label>
 
-    </form>
+          <div className="form-buttons">
+            <button onClick={handleSubmit} className="save-btn">💾 שמור</button>
+            <button onClick={onCancel} className="cancel-btn">❌ ביטול</button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

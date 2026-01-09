@@ -1,72 +1,62 @@
 import { useState } from "react";
+import { filterByIdTitle } from "../utils/filterByIdTitle";
 
 function TodoSearchPanel({ todos, onSearchResult }) {
 
-  // 🔹 מה המשתמש מחפש
   const [query, setQuery] = useState("");
-
-  // 🔹 לפי איזה קריטריון
   const [criteria, setCriteria] = useState("title");
 
 function handleSearch() {
   let filtered = [];
 
-  if (criteria === "id") {///להשתמש בפונקציה אלישבע
-    filtered = todos.filter(todo => String(todo.id).includes(query));
-
-  } else if (criteria === "title") {
-    filtered = todos.filter(todo =>
-      todo.title.toLowerCase().includes(query.toLowerCase())
-    );
-  } else if (criteria === "completed") {
-    filtered = todos.filter(todo => String(todo.completed) === query);
+ if (criteria === "id") {
+    filtered = filterByIdTitle(todos, query, "");
+  } 
+  else if (criteria === "title") {
+    filtered = filterByIdTitle(todos, "", query);
+  } 
+  else if (criteria === "completed") {
+    filtered = filterByIdTitle(todos, "", "", query === "true");
   }
 
-  // ❗ אם אין תוצאות, שמרו מערך ריק, לא null
-  // הצג הכל תשלח null באופן מפורש בלבד
-  onSearchResult(filtered);
-
-  // ❗ רוקנים את שדה החיפוש תמיד אחרי לחיצה
-  setQuery("");
+  onSearchResult(filtered);//show filtered results
 }
 
   return (
     <div className="search-panel">
       <select
+        className="search-select"
         value={criteria}
         onChange={e => {
           setCriteria(e.target.value);
           setQuery("");
         }}
       >
-        <option value="id">מזהה</option>
-        <option value="title">כותרת</option>
-        <option value="completed">מצב ביצוע (true / false)</option>
+        <option value="id">🔢 מזהה</option>
+        <option value="title">📝 כותרת</option>
+        <option value="completed">✅ מצב ביצוע</option>
       </select>
 
       {criteria === "completed" ? (
-        <select value={query} onChange={e => setQuery(e.target.value)}>
+        <select className="search-input" value={query} onChange={e => setQuery(e.target.value)}>
+          <option value="">בחר...</option>
           <option value="true">בוצע</option>
           <option value="false">לא בוצע</option>
         </select>
       ) : (
         <input
-          placeholder="הקלד ערך לחיפוש"
+          className="search-input"
+          placeholder="🔍 הקלד לחיפוש..."
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === "Enter" && handleSearch()}
         />
-
       )}
 
-      <button onClick={handleSearch}>🔍 חפש</button>
-      <button
-        onClick={() => {
-          onSearchResult(null);
-          setQuery("");
-        }}
-      >
-        הצג הכל
+      <button onClick={handleSearch} className="search-btn">🔍 חפש</button>
+
+      <button onClick={() => { onSearchResult(null); setQuery(""); }} className="show-all-btn">
+        📋 הצג הכל
       </button>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext  } from "react";
+import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../AuthContext.jsx";
 import { useNavigate, Link } from "react-router-dom";
 import { createUser } from "../api/SignInUpAPI.js";
@@ -7,73 +7,75 @@ import "./Signup.css";
 
 function Signup() {
   const { setUser } = useContext(AuthContext);
-  const [formData, setFormData] = useState({
-    username: "",
-    website: "",
-    verifyWebsite: ""
-  });
-
-  const [errors, setErrors] = useState({
-    username: "",
-    website: "",
-    verifyWebsite: ""
-  });
-
-  const [touched, setTouched] = useState({
-    username: false,
-    website: false,
-    verifyWebsite: false
-  });
-
   const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({ username: "", website: "", verifyWebsite: "" });
+  const [errors, setErrors] = useState({ username: "", website: "", verifyWebsite: "" });
+  const [touched, setTouched] = useState({ username: false, website: false, verifyWebsite: false });
+
   function handleChange(e) {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  }
+  const { name, value } = e.target;
+  const updatedFormData = { ...formData, [name]: value };
+  setFormData(updatedFormData);
 
-  function handleBlur(e) {
-    const { name } = e.target;
-    setTouched({ ...touched, [name]: true });
-  }
-
-async function handleSubmit(e) {
-  e.preventDefault();
-  setTouched({ username: true, website: true, verifyWebsite: true });
-
-  const { isValid, errors } = validateForm(formData, [
-    "username",
-    "website",
-    "verifyWebsite"
-  ]);
-
-  setErrors(errors);
-
-  if (!isValid) return;
-
-  try {
-    const newUser = await createUser(
-      formData.username,
-      formData.website
-    );
-
-    if (!newUser) {
-      alert("שם משתמש כבר קיים במערכת");
-      return;
-    }
-
-    setUser({
-      username: newUser.username,
-      id: newUser.id,
-      email: newUser.email
-    });
-
-    navigate(`/users/${newUser.id}/userInformation`);
-  } catch (error) {
-    console.error("Signup error:", error);
-    alert("שגיאה בהרשמה, נסי שוב");
+  // אם כבר נגעו בשדה, מריצים ולידציה מיידית
+  if (touched[name]) {
+    const error = validateField(name, value, updatedFormData);
+    setErrors(prev => ({ ...prev, [name]: error }));
   }
 }
+
+
+  function handleBlur(e) {
+  const { name, value } = e.target;
+
+  setTouched(prev => ({ ...prev, [name]: true }));
+
+  // יוצרים אובייקט זמני עם הערך החדש
+  const updatedFormData = { ...formData, [name]: value };
+
+  const error = validateField(name, value, updatedFormData);
+
+  setErrors(prev => ({ ...prev, [name]: error }));
+}
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setTouched({ username: true, website: true, verifyWebsite: true });
+
+    const { isValid, errors } = validateForm(formData, [
+      "username",
+      "website",
+      "verifyWebsite"
+    ]);
+
+    setErrors(errors);
+
+    if (!isValid) return;
+
+    try {
+      const newUser = await createUser(
+        formData.username,
+        formData.website
+      );
+
+      if (!newUser) {
+        alert("שם משתמש כבר קיים במערכת");
+        return;
+      }
+
+      setUser({
+        username: newUser.username,
+        id: newUser.id,
+        email: newUser.email
+      });
+
+      navigate(`/users/${newUser.id}/userInformation`);
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("שגיאה בהרשמה, נסי שוב");
+    }
+  }
   const getBorderColor = (field) => {
     if (!touched[field]) return "#ccc";
     return errors[field] ? "red" : "green";

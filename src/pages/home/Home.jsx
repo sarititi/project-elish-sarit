@@ -4,7 +4,6 @@ import { AuthContext } from "../AuthContext.jsx";
 import SideMenu from "../../components/SideMenu.jsx";
 import "./home.css";
 
-
 function Home() {
     const { user, setUser } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -73,8 +72,6 @@ function Home() {
                             </div>
                         </>
                     )}
-
-                    {/* הצג את התוכן הפנימי */}
                     <Outlet />
                 </div>
             </main>

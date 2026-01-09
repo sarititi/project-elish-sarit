@@ -18,7 +18,7 @@ function Albums() {
     fetchAlbums();
   }, [user.id]);
 
-  async function fetchAlbums() {//טוליפת נתונים של האלבומים מהשרת
+  async function fetchAlbums() {
     setIsLoading(true);
     const data = await getAlbumsByUser(user.id);
     setTimeout(() => {

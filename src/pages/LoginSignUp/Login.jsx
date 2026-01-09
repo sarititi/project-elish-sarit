@@ -9,16 +9,15 @@ function Login() {
   const [website, setWebsite] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { user, setUser } = useContext(AuthContext);
+  const {setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLoginCheck = async () => {
     setLoading(true);
     try {
       const fullUser = await IsRegistered(username, website);
-
       if (fullUser) {
-        // localStorage.setItem("user", JSON.stringify(fullUser));
+
         setUser({
           username: fullUser.username,
           id: fullUser.id,
