@@ -10,7 +10,7 @@ function SideMenu() {
     function handleLogout() {
         localStorage.removeItem("user");
         setUser(null);
-        navigate("/login");
+        navigate("/login", { replace: true });
     }
 
     if (!user) return null;

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { AuthContext } from "../AuthContext.jsx";
 import { useNavigate, Link } from "react-router-dom";
 import { createUser } from "../api/SignInUpAPI.js";
@@ -14,47 +14,30 @@ function Signup() {
   const [touched, setTouched] = useState({ username: false, website: false, verifyWebsite: false });
 
   function handleChange(e) {
-  const { name, value } = e.target;
-  const updatedFormData = { ...formData, [name]: value };
-  setFormData(updatedFormData);
+    const { name, value } = e.target;
+    const updatedFormData = { ...formData, [name]: value };
+    setFormData(updatedFormData);
+  }
 
-  // אם כבר נגעו בשדה, מריצים ולידציה מיידית
-  if (touched[name]) {
+  function handleBlur(e) {
+    const { name, value } = e.target;
+    setTouched(prev => ({ ...prev, [name]: true }));
+
+    const updatedFormData = { ...formData, [name]: value };
     const error = validateField(name, value, updatedFormData);
     setErrors(prev => ({ ...prev, [name]: error }));
   }
-}
-
-
-  function handleBlur(e) {
-  const { name, value } = e.target;
-
-  setTouched(prev => ({ ...prev, [name]: true }));
-
-  // יוצרים אובייקט זמני עם הערך החדש
-  const updatedFormData = { ...formData, [name]: value };
-
-  const error = validateField(name, value, updatedFormData);
-
-  setErrors(prev => ({ ...prev, [name]: error }));
-}
 
   async function handleSubmit(e) {
     e.preventDefault();
     setTouched({ username: true, website: true, verifyWebsite: true });
 
-    const { isValid, errors } = validateForm(formData, [
-      "username",
-      "website",
-      "verifyWebsite"
-    ]);
-
+    const { isValid, errors } = validateForm(formData, ["username", "website", "verifyWebsite"]);
     setErrors(errors);
-
     if (!isValid) return;
 
     try {
-      const newUser = await createUser(
+      const newUser = await createUser(//put the new user in rhe data
         formData.username,
         formData.website
       );
@@ -67,7 +50,8 @@ function Signup() {
       setUser({
         username: newUser.username,
         id: newUser.id,
-        email: newUser.email
+        email: newUser.email,
+        isProfileComplete: false
       });
 
       navigate(`/users/${newUser.id}/userInformation`);

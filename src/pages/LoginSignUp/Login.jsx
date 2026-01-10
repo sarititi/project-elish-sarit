@@ -9,7 +9,7 @@ function Login() {
   const [website, setWebsite] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const {setUser } = useContext(AuthContext);
+  const {user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLoginCheck = async () => {
@@ -21,11 +21,12 @@ function Login() {
         setUser({
           username: fullUser.username,
           id: fullUser.id,
-          email: fullUser.email
+          email: fullUser.email,
+          isProfileComplete: true
         });
 
         alert("התחברת בהצלחה!");
-        navigate(`/users/${fullUser.id}/home`);
+        navigate(`/users/${fullUser.id}/home`, { replace: true });
       } else {
         alert("אינך קיים במערכת, נא להירשם");
         setUsername("");

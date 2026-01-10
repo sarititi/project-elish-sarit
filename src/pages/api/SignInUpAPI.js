@@ -40,9 +40,13 @@ export async function createUser(username, website) {
 }
 
 export async function getUserById(userId) {
+  if (userId == null) {
+    throw new Error("User ID is missing");
+  }
   const res = await fetch(`${BASE_URL}/${userId}`);
-  if (!res.ok) throw new Error("Failed to fetch user");
-  return await res.json();
+  if (!res.ok)
+    throw new Error("Failed to fetch user");
+  return res.json();
 }
 
 export async function updateUser(userId, partialUserData) {

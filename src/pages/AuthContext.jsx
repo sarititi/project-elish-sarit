@@ -7,7 +7,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState({
     id: null,
     username: null,
-    email: null
+    email: null,
+    isProfileComplete: false
   });
 
    // 🔄 טעינה מרענון
