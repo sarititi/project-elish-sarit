@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef  } from "react";
 import { AuthContext } from "../AuthContext";
 import { getAlbumsByUser, createAlbum } from "../api/AlbumsAPI";
 import AlbumCreate from "./AlbumCreate.jsx";
@@ -9,12 +9,14 @@ import "./Albums.css";
 
 function Albums() {
   const { user } = useContext(AuthContext);
+  const formRef = useRef(null);
   const [albums, setAlbums] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchBy, setSearchBy] = useState("title");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!user?.id) return;
     fetchAlbums();
   }, [user.id]);
 
@@ -52,7 +54,6 @@ const filteredAlbums = filterByIdTitle(
         setSearchBy={setSearchBy}
       />
 
-      {/* תצוגת האלבומים */}
       {isLoading ? (
         <div className="loading">טוען אלבומים...</div>
       ) : filteredAlbums.length === 0 ? (

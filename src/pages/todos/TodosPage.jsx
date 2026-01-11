@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useRef} from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { AuthContext } from "../AuthContext.jsx";
 import TodosList from "./TodosList";
 import TodoForm from "./TodoForm";
@@ -8,7 +8,8 @@ import { fetchTodos, createTodo } from "../api/TodoAPI.js";
 import "./todos.css";
 
 function TodosPage() {
-  const { user } = useContext(AuthContext);
+  const { user} = useContext(AuthContext);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const [todos, setTodos] = useState([]);
   const [sortBy, setSortBy] = useState("id");
@@ -18,6 +19,7 @@ function TodosPage() {
   const formRef = useRef(null);
 
   useEffect(() => {
+    if (!user?.id) return;
     refreshTodos();
   }, [user.id]);
 

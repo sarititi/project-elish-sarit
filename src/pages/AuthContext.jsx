@@ -1,3 +1,40 @@
+// import { createContext, useState, useEffect } from "react";
+
+// export const AuthContext = createContext();
+
+// export function AuthProvider({ children }) {
+  
+//   const [user, setUser] = useState({
+//     id: null,
+//     username: null,
+//     email: null,
+//     isProfileComplete: false
+//   });
+
+//    // 🔄 טעינה מרענון
+//   useEffect(() => {
+//     const savedUser = localStorage.getItem("user");
+//     if (savedUser) {
+//       setUser(JSON.parse(savedUser));
+//     }
+//   }, []);
+
+//   // 💾 שמירה בכל שינוי
+//   useEffect(() => {
+//     if (user) {
+//       localStorage.setItem("user", JSON.stringify(user));
+//     } else {
+//       localStorage.removeItem("user");
+//     }
+//   }, [user]);
+
+//   return (
+//     <AuthContext.Provider value={{ user, setUser }}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// }
+
 import { createContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext();
@@ -10,16 +47,20 @@ export function AuthProvider({ children }) {
     email: null,
     isProfileComplete: false
   });
+    const [isAuthLoading, setIsAuthLoading] = useState(true);
+
 
    // 🔄 טעינה מרענון
-  useEffect(() => {
+    useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
+    } else {
+      setUser(null);
     }
+    setIsAuthLoading(false); // 🔥 סיימנו לטעון
   }, []);
 
-  // 💾 שמירה בכל שינוי
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -29,7 +70,7 @@ export function AuthProvider({ children }) {
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, isAuthLoading }}>
       {children}
     </AuthContext.Provider>
   );
